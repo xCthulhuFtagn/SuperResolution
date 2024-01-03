@@ -8,5 +8,8 @@ https://www.kaggle.com/code/akhileshdkapse/sr-super-resolution-gan-keras
 
 https://paperswithcode.com/task/video-super-resolution
 
-IMPORTANT ONE
+IMPORTANT ONES
 https://medium.com/mingle-sport/deep-learning-for-image-and-video-super-resolution-60bf340693c6
+
+http://cs231n.stanford.edu/reports/2016/pdfs/212_Report.pdf
+
