@@ -15,6 +15,9 @@ http://cs231n.stanford.edu/reports/2016/pdfs/212_Report.pdf
 
 https://colab.research.google.com/github/MSFTserver/AI-Colab-Notebooks/blob/main/ESRGAN_4_Video.ipynb#scrollTo=Q9V7MOOgBTY7
 
+important:
+https://github.com/AmrShaaban99/super-resolution
+
 GIVEN:
 from there I think between FSRCNN/ESPCN/ESRGAN
 https://blog.paperspace.com/image-super-resolution/
