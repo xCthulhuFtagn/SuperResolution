@@ -18,6 +18,9 @@ https://colab.research.google.com/github/MSFTserver/AI-Colab-Notebooks/blob/main
 important:
 https://github.com/AmrShaaban99/super-resolution
 
+https://towardsdatascience.com/review-fsrcnn-super-resolution-80ca2ee14da4
+https://medium.datadriveninvestor.com/review-espcn-real-time-sr-super-resolution-8dceca249350
+
 GIVEN:
 from there I think between FSRCNN/ESPCN/ESRGAN
 https://blog.paperspace.com/image-super-resolution/
