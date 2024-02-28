@@ -1,3 +1,5 @@
 rutube_hackaton_super_resolution_khabarovsk/
 .venv/
 train_frames/
+output.avi
+model-40-20000.pt
