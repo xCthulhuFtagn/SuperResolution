@@ -1,13 +1,21 @@
 from ESRGAN import Generator, Discriminator
+from dataset import SRDataset, SameTransform
+
+import numpy as np
+
 import torch
 import torch.nn as nn
 from torch.optim import Adam
-from torchvision import transforms
-from dataset import SRDataset, SameTransform
-import cv2
 from torch.utils.data import DataLoader
+
+from torchvision import transforms
+
+import cv2
+
 from skimage.metrics import peak_signal_noise_ratio,  structural_similarity
-import numpy as np
+
+from torchvision.models import vgg19
+
 
 def initialize_weights(model, scale = 0.1):
     for m in model.modules():
@@ -19,6 +27,15 @@ def initialize_weights(model, scale = 0.1):
             m.weight.data *= scale
         # elif isinstance(m. nn.Module):
         #     initialize_weights(m)
+        
+class FeatureExtractor(nn.Module):
+    def __init__(self):
+        super(FeatureExtractor, self).__init__()
+        vgg19_model = vgg19(pretrained=True)
+        self.vgg19_54 = nn.Sequential(*list(vgg19_model.features.children())[:35])
+
+    def forward(self, img):
+        return self.vgg19_54(img)
 
 class ESRGAN_Trainer():
     def __init__(self, lr = 1e-4, betas = (.9, .99)):
@@ -44,6 +61,7 @@ class ESRGAN_Trainer():
         # инициализация модели
         self.generator = Generator(in_channels = 3).to(self.device)
         self.discriminator = Discriminator(in_channels=3).to(self.device)
+        self.feature_extractor = FeatureExtractor().to(self.device)
         initialize_weights(self.generator)
         initialize_weights(self.discriminator)
 
