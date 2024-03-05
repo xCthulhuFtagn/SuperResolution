@@ -12,15 +12,15 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 import math
 
-class ConvBlock(nn.module):
+class ConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels, use_activation, **kwargs):
-        super().__init()
+        super(ConvBlock, self).__init__()
         
         self.cnn = nn.Conv2d(
             in_channels,
             out_channels,
             **kwargs,
-            bias=True
+            bias=True,
         )
         
         self.activation = nn.LeakyReLU(0.2, inplace=True) if use_activation else nn.Identity()
@@ -28,9 +28,9 @@ class ConvBlock(nn.module):
     def forward(self, x):
         return self.activation(self.cnn(x))
     
-class UpsampleBlock(nn.module):
+class UpsampleBlock(nn.Module):
     def __init__(self, in_channels, scale_factor):
-        super().__init__()
+        super(UpsampleBlock, self).__init__()
         self.upsample = nn.Upsample(scale_factor=scale_factor, mode="nearest")
         self.conv = nn.Conv2d(in_channels, in_channels, 3, 1, 1, bias = True)
         self.act = nn.LeakyReLU(0.2, inplace=True)
@@ -41,7 +41,7 @@ class UpsampleBlock(nn.module):
 
 class DenseResidualBlock(nn.Module):
     def __init__(self, in_channels, channels = 32, residual_beta = 0.2):
-        super().__init__()
+        super(DenseResidualBlock, self).__init__()
         
         self.residual_beta = residual_beta
         self.subblocks = nn.ModuleList
@@ -49,12 +49,14 @@ class DenseResidualBlock(nn.Module):
         for i in range(5):
             self.subblocks.append(
                 # channels * i for concatenation
-                ConvBlock(in_channels + channels * i),
-                channels if i < 4 else in_channels,
-                kernel_size = 3,
-                stride = 1,
-                padding = 1,
-                use_act = (i < 4)
+                ConvBlock(
+                    in_channels + channels * i,
+                    channels if i < 4 else in_channels,
+                    kernel_size = 3,
+                    stride = 1,
+                    padding = 1,
+                    use_activation = (i < 4)
+                )
             )
     
     def forward(self, x):
@@ -66,7 +68,7 @@ class DenseResidualBlock(nn.Module):
     
 class RDRB(nn.Module):
     def __init__(self, in_channels, residual_beta=0.2):
-        super().__init__()
+        super(RDRB, self).__init__()
         self.residual_beta = residual_beta
         self.rdrb = nn.Sequential(
             *[DenseResidualBlock(in_channels) for _ in range(3)]
@@ -75,9 +77,9 @@ class RDRB(nn.Module):
     def forward(self, x):
         return self.rdrb(x) + self.residual_beta * x
 
-class deGenerator(nn.Module):
+class Generator(nn.Module):
     def __init__(self, in_channels, num_channels = 64, num_blocks = 23) -> None:
-        super().__init__()
+        super(Generator, self).__init__()
         self.initial = nn.Conv2d(
             in_channels,
             num_channels,
