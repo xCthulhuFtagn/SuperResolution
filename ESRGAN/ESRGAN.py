@@ -29,7 +29,7 @@ class ConvBlock(nn.Module):
         return self.activation(self.cnn(x))
     
 class UpsampleBlock(nn.Module):
-    def __init__(self, in_channels, scale_factor):
+    def __init__(self, in_channels, scale_factor=2):
         super(UpsampleBlock, self).__init__()
         self.upsample = nn.Upsample(scale_factor=scale_factor, mode="nearest")
         self.conv = nn.Conv2d(in_channels, in_channels, 3, 1, 1, bias = True)
@@ -44,11 +44,11 @@ class DenseResidualBlock(nn.Module):
         super(DenseResidualBlock, self).__init__()
         
         self.residual_beta = residual_beta
-        self.subblocks = nn.ModuleList
+        self.subblocks = nn.ModuleList()
         
         for i in range(5):
+            # channels * i for concatenation
             self.subblocks.append(
-                # channels * i for concatenation
                 ConvBlock(
                     in_channels + channels * i,
                     channels if i < 4 else in_channels,

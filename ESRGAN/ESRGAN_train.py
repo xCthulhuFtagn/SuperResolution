@@ -29,6 +29,8 @@ class ESRGAN_Trainer():
         self.n_presteps = 1e6
         # количество шагов обучения
         self.n_steps = 1e10
+        # количество совершенных шагов
+        self.cur_steps = 0
 
         # раз во сколько шагов выводить результаты
         self.print_interval = 100
@@ -70,7 +72,7 @@ class ESRGAN_Trainer():
         train_transform = SameTransform('train')
 
         # путь где хранятся папки lr и hr с изображениями
-        train_prefix = './train_frames'
+        train_prefix = '../train_frames'
 
         # train датасет
         trainset = SRDataset(
@@ -112,7 +114,7 @@ class ESRGAN_Trainer():
             }, "./checkpoint")
 
     def train(self):
-        self.fsrcnn.train()
+        self.generator.train()
 
         while True:
             if self.cur_steps >= self.n_steps + self.n_presteps:
@@ -124,11 +126,11 @@ class ESRGAN_Trainer():
                 hr = hr.to(self.device, non_blocking=True)
                 self.cur_steps += 1
                 
-                valid = torch.Tensor(np.ones((self.batch_size, *self.frame_size)), requires_grad=False)
-                fake = torch.Tensor(np.zeros((self.batch_size, *self.frame_size)), requires_grad=False)
+                valid = torch.Tensor(np.ones((self.batch_size, *self.frame_size)))
+                fake = torch.Tensor(np.zeros((self.batch_size, *self.frame_size)))
                 
                 
-                g_hr = self.fsrcnn(lr)
+                g_hr = self.generator(lr)
                 # g_hr = self.gcrop.forward(g_hr)
                 
                 # training generator
@@ -163,6 +165,8 @@ class ESRGAN_Trainer():
                 self.optimizer_G.step()
                 
                 # training discriminator
+                
+                self.discriminator.train()
                 
                 self.optimizer_D.zero_grad()
                 
